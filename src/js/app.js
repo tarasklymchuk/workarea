@@ -1,6 +1,6 @@
-var app = angular.module('app', ['angularUtils.directives.dirPagination']);
+var app = angular.module('app', []);
 const $url = 'http://192.168.10.10:3000/';
-app.$inject='$http';
+// app.$inject='$http';
 app.controller('TableController', ['$http', '$scope', function ($http, $scope) {
     /**
      * get all people
@@ -9,8 +9,8 @@ app.controller('TableController', ['$http', '$scope', function ($http, $scope) {
         $http({
             method: 'GET',
             url: $url
-        }).then(function (callback) {
-            $scope.users = callback;
+        }).then(function (res) {
+            $scope.users = res.data;
         });
     };
     $scope.getAllPeople();
@@ -77,7 +77,7 @@ app.controller('TableController', ['$http', '$scope', function ($http, $scope) {
                 $scope.getAllPeople();
                 swal(
                     'Deleted!',
-                    res.message,
+                    res.data.message,
                     'success'
                 );
             });
@@ -90,12 +90,12 @@ app.controller('TableController', ['$http', '$scope', function ($http, $scope) {
      */
     $scope.view = function (user) {
         $('#profile').removeClass('hidden');
-        user.bd = user.bd.toString('MM/dd/yyyy');
+        // user.bd = user.bd.toString('MM/dd/yyyy');
         $scope.staff = user;
     };
     $scope.edit = function (user) {
         // $('#profile').removeClass('hidden');
-        user.bd = Date.parse(user.bd).toString('MM/dd/yyyy');
+        // user.bd = Date.parse(user.bd).toString('MM/dd/yyyy');
         $scope.people = user;
     };
     /**
@@ -103,7 +103,7 @@ app.controller('TableController', ['$http', '$scope', function ($http, $scope) {
      * @param keyname
      */
     $scope.sort = function (keyname) {
-        $scope.sortKey = keyname.length > 0 ? keyname : 'created_date';   //set the sortKey to the param passed
+        $scope.sortKey = keyname;   //set the sortKey to the param passed
         $scope.reverse = !$scope.reverse; //if true make it false and vice versa
     }
 
