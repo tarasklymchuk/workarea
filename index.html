@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <title>Users Work Staff</title>
+    <link rel="stylesheet" href="./src/lib/sweetalert2/dist/sweetalert2.min.css"/>
+    <link rel="stylesheet" href="./src/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./src/lib/bootstrap/dist/css/bootstrap-theme.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./src/css/style.css">
+
+</head>
+<body>
+<div class="container" ng-controller="TableController">
+    <div class="row">
+        <div class="input-group" id="filter">
+            <input type="text" class="form-control" id="search" ng-model="search" placeholder="Filter people">
+            <span class="input-group-btn">
+        <button class="btn btn-secondary btn-default" type="button" data-toggle="modal" data-target="#add"><i
+                class="fa fa-plus"></i> Add new people</button>
+      </span>
+        </div>
+        <table class="table table-bordred table-striped">
+            <thead>
+            <th ng-click="sort('fio')">FIO <i class="fa fa-sort pull-right" ng-show="sortKey=='fio'"
+                                              ng-class="{'fa fa-sort-desc':reverse,'fa fa-sort-asc':!reverse}"></i>
+            </th>
+            <th ng-click="sort('work_area')">Work Area <i class="fa fa-sort pull-right"
+                                                          ng-show="sortKey=='work_area'"
+                                                          ng-class="{'fa fa-sort-desc':reverse,'fa fa-sort-asc':!reverse}"></i>
+            </th>
+            <th ng-click="sort('salary')">Salary <i class="fa fa-sort pull-right" ng-show="sortKey=='salary'"
+                                                    ng-class="{'fa fa-sort-desc':reverse,'fa fa-sort-asc':!reverse}"></i>
+            </th>
+            <th>Action</th>
+            </thead>
+            <tbody>
+            <tr dir-paginate="user in users|orderBy:sortKey:reverse|filter:search|itemsPerPage:5">
+                <td ng-click="view(user)">{{user.fio}}</td>
+                <td ng-click="view(user)">{{user.work_area}}</td>
+                <td ng-click="view(user)">{{user.salary}}</td>
+                <td>
+                    <button ng-click="edit(user)" data-toggle="modal" data-target="#edit"><i class="fa fa-edit"></i>
+                    </button>
+                    <button ng-click="delete(user)"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="pull-right">
+            <dir-pagination-controls
+                    max-size="5"
+                    direction-links="true"
+                    boundary-links="true">
+            </dir-pagination-controls>
+        </div>
+        <!-- profile -->
+        <div class="hidden" id="profile">
+            <div class="col-xs-12 col-sm-6 col-md-6">
+                <div class="well well-sm">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <h4 class="small pull-right">{{staff.work_area}}</h4>
+                            <h3>
+                                {{staff.fio}}</h3>
+                            <p>
+                                Birthday {{staff.bd}}
+                                <br/>
+                                Salary {{staff.salary}}
+                                <br/>
+                                Start work: {{staff.start_date}}
+                                <br/>
+                                Create record: {{staff.created_date}}</p>
+                            <button class="btn-default pull-right" id="hidde-profile"> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end profile-->
+        <div class="modal fade" id="edit" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Edit {{people.fio}}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input class="form-control" type="hidden" ng-model="entity._id" value="{{people._id}}">
+                            <label class="col-2 col-form-label">FIO</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" ng-model="entity.fio" value="{{people.fio}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-2 col-form-label">Work area</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" ng-model="entity.work_area"
+                                       value="{{people.work_area}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="example-number-input" class="col-2 col-form-label">Salary</label>
+                            <div class="col-10">
+                                <input class="form-control" type="number" ng-model="entity.salary"
+                                       value="{{people.salary}}"
+                                       id="example-number-input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-2 col-form-label">Birthday</label>
+                            <div class="col-10">
+                                <input class="form-control" type="date" ng-model="entity.bd"
+                                       value="{{people.bd | date:'MM/dd/yyyy'}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-2 col-form-label">Date start work</label>
+                            <div class="col-10">
+                                <input class="form-control" type="date" ng-model="entity.start_date"
+                                       value="{{people.start_date | date:'MM/dd/yyyy'}}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" ng-click="update()">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal fade" id="add" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Add new people</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-2 col-form-label">FIO</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" ng-model="entity.fio">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-2 col-form-label">Work area</label>
+                            <div class="col-10">
+                                <input class="form-control" type="text" ng-model="entity.work_area">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="example-number-input" class="col-2 col-form-label">Salary</label>
+                            <div class="col-10">
+                                <input class="form-control" type="number" ng-model="entity.salary">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-2 col-form-label">Birthday</label>
+                            <div class="col-10">
+                                <input class="form-control" type="date" ng-model="entity.bd">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-2 col-form-label">Date start work</label>
+                            <div class="col-10">
+                                <input class="form-control" type="date" ng-model="entity.start_date">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" ng-click="save()">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script src="./src/lib/jquery/dist/jquery.min.js"></script>
+<script src="./src/lib/sweetalert2/dist/sweetalert2.min.js"></script>
+<script src="src/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="./src/lib/angular/angular.min.js"></script>
+<script src="./src/lib/angularUtils-pagination/dirPagination.js"></script>
+<script src="./src/js/app.js"></script>
+<script>
+    $('#hidde-profile').click(function () {
+        $('#profile').addClass('hidden');
+    });
+</script>
+</body>
+</html>
