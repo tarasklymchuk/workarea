@@ -1,4 +1,4 @@
-var app = angular.module('app', []);
+var app = angular.module('app', ['ui.bootstrap.datetimepicker', 'angularUtils.directives.dirPagination']);
 const $url = 'http://192.168.10.10:3000/';
 // app.$inject='$http';
 app.controller('TableController', ['$http', '$scope', function ($http, $scope) {
@@ -30,19 +30,22 @@ app.controller('TableController', ['$http', '$scope', function ($http, $scope) {
     $scope.update = function () {
 
         console.log($scope.entity);
-        // $.ajax({
-        //     method: 'PUT',
-        //     url: $url + 'staff/' + $user._id
-        // }).done(function (res) {
-        //     $scope.getAllPeople();
-        //     swal(
-        //         'Deleted!',
-        //         res.message,
-        //         'success'
-        //     );
-        //
-        // });
+        $http({
+            method: 'PUT',
+            url: $url + 'staff/' + $user._id
+        }).done(function (res) {
+            $scope.getAllPeople();
+            swal(
+                'Deleted!',
+                res.message,
+                'success'
+            );
+
+        });
     };
+    /**
+     * save action
+     */
     $scope.save = function () {
         $http({
             method: 'POST',
@@ -90,12 +93,11 @@ app.controller('TableController', ['$http', '$scope', function ($http, $scope) {
      */
     $scope.view = function (user) {
         $('#profile').removeClass('hidden');
-        // user.bd = user.bd.toString('MM/dd/yyyy');
         $scope.staff = user;
     };
+
     $scope.edit = function (user) {
         // $('#profile').removeClass('hidden');
-        // user.bd = Date.parse(user.bd).toString('MM/dd/yyyy');
         $scope.people = user;
     };
     /**
